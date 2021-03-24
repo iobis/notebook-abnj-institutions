@@ -10,7 +10,7 @@ knit: (function(inputFile, encoding) {
   rmarkdown::render(inputFile, encoding = encoding, output_dir = "docs") })  
 ---
 
-This is a quick exploration of institutions associated with ABNJ data in OBIS.
+This is a quick exploration of institutions associated with ABNJ data in OBIS. The code for this notebook is available at https://github.com/iobis/notebook-abnj-institutions.
 
 ## Record level institution codes
 
