@@ -1880,7 +1880,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <span id="cb2-4"><a href="#cb2-4"></a>institution_codes &lt;-<span class="st"> </span>df <span class="op">%&gt;%</span></span>
 <span id="cb2-5"><a href="#cb2-5"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(institutionCode)) <span class="op">%&gt;%</span></span>
 <span id="cb2-6"><a href="#cb2-6"></a><span class="st">  </span><span class="kw">group_by</span>(institutionCode) <span class="op">%&gt;%</span></span>
-<span id="cb2-7"><a href="#cb2-7"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">records =</span> <span class="kw">n</span>()) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># , datasets = length(unique(dataset_id))</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">records =</span> <span class="kw">n</span>(), <span class="dt">datasets =</span> <span class="kw">length</span>(<span class="kw">unique</span>(dataset_id))) <span class="op">%&gt;%</span></span>
 <span id="cb2-8"><a href="#cb2-8"></a><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(records))</span>
 <span id="cb2-9"><a href="#cb2-9"></a></span>
 <span id="cb2-10"><a href="#cb2-10"></a>institution_codes <span class="op">%&gt;%</span></span>
@@ -1888,135 +1888,167 @@ document.addEventListener('DOMContentLoaded', function() {
 <span id="cb2-12"><a href="#cb2-12"></a><span class="st">  </span><span class="kw">kable</span>()</span></code></pre></div>
 <table>
 <colgroup>
-<col width="90%"></col>
+<col width="81%"></col>
+<col width="8%"></col>
 <col width="9%"></col>
 </colgroup>
 <thead>
 <tr class="header">
 <th align="left">institutionCode</th>
 <th align="right">records</th>
+<th align="right">datasets</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left">AADC</td>
 <td align="right">831047</td>
+<td align="right">77</td>
 </tr>
 <tr class="even">
 <td align="left">Pangaea</td>
 <td align="right">463413</td>
+<td align="right">26</td>
 </tr>
 <tr class="odd">
 <td align="left">IRD, UMR EME, SÃ¨te, France</td>
 <td align="right">182777</td>
+<td align="right">2</td>
 </tr>
 <tr class="even">
 <td align="left">BioPlatforms</td>
 <td align="right">171637</td>
+<td align="right">4</td>
 </tr>
 <tr class="odd">
 <td align="left">ICoMM</td>
 <td align="right">131270</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">DEPE</td>
 <td align="right">100868</td>
+<td align="right">1</td>
 </tr>
 <tr class="odd">
 <td align="left">North Atlantic Fisheries Centre</td>
 <td align="right">82224</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">NIWA</td>
 <td align="right">74622</td>
+<td align="right">17</td>
 </tr>
 <tr class="odd">
 <td align="left">USNM</td>
 <td align="right">65175</td>
+<td align="right">10</td>
 </tr>
 <tr class="even">
 <td align="left">CCAMLR</td>
 <td align="right">61942</td>
+<td align="right">1</td>
 </tr>
 <tr class="odd">
 <td align="left">FRA</td>
 <td align="right">55542</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">NOAA SEFSC</td>
 <td align="right">55049</td>
+<td align="right">1</td>
 </tr>
 <tr class="odd">
 <td align="left">WHOI</td>
 <td align="right">53582</td>
+<td align="right">3</td>
 </tr>
 <tr class="even">
 <td align="left">IRD, UMR EME, Sète, France</td>
 <td align="right">52915</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="left">Southampton Oceanography Ceter</td>
 <td align="right">46778</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">Globec</td>
 <td align="right">41824</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="left">ArcOD</td>
 <td align="right">39680</td>
+<td align="right">15</td>
 </tr>
 <tr class="even">
 <td align="left">MNHN</td>
 <td align="right">34949</td>
+<td align="right">11</td>
 </tr>
 <tr class="odd">
 <td align="left">BAS</td>
 <td align="right">33708</td>
+<td align="right">25</td>
 </tr>
 <tr class="even">
 <td align="left">Fisheries and Oceans Canada, Institute of Ocean Sciences</td>
 <td align="right">30681</td>
+<td align="right">1</td>
 </tr>
 <tr class="odd">
 <td align="left">MCZ</td>
 <td align="right">30399</td>
+<td align="right">2</td>
 </tr>
 <tr class="even">
 <td align="left">DFO-NFLD</td>
 <td align="right">26049</td>
+<td align="right">1</td>
 </tr>
 <tr class="odd">
 <td align="left">Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada</td>
 <td align="right">24984</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">ICES</td>
 <td align="right">20879</td>
+<td align="right">7</td>
 </tr>
 <tr class="odd">
 <td align="left">BODC</td>
 <td align="right">18485</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">Wildlife Conservation Society</td>
 <td align="right">15275</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="left">Dr. S.Z. El-Sayed</td>
 <td align="right">15080</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">NHM</td>
 <td align="right">14271</td>
+<td align="right">1</td>
 </tr>
 <tr class="odd">
 <td align="left">Canadian Wildlife Service</td>
 <td align="right">13044</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">JODC</td>
 <td align="right">12944</td>
+<td align="right">1</td>
 </tr>
 </tbody>
 </table>

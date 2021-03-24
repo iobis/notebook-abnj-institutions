@@ -38,7 +38,7 @@ library(knitr)
 institution_codes <- df %>%
   filter(!is.na(institutionCode)) %>%
   group_by(institutionCode) %>%
-  summarize(records = n()) %>% # , datasets = length(unique(dataset_id))
+  summarize(records = n(), datasets = length(unique(dataset_id))) %>%
   arrange(desc(records))
 
 institution_codes %>%
