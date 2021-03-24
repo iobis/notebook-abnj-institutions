@@ -24,7 +24,7 @@ library(robis)
 if (file.exists("occurrence.Rdata")) {
   df <- readRDS("occurrence.Rdata")  
 } else {
-  df <- occurrence(areaid = 1, fields = c("institutionCode", "collectionCode", "decimalLongitude", "decimalLatitude", "eventDate", "scientificName", "dataset_id"))
+  df <- occurrence(areaid = 1, fields = c("institutionCode", "institutionID", "dataset_id"))
   saveRDS(df, file = "occurrence.Rdata")
 }
 ```
