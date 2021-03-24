@@ -1,0 +1,117 @@
+---
+title: OBIS ABNJ data providing institutions
+date: "`r Sys.Date()`"
+author: Pieter Provoost
+output: (function(...) {
+  rmdformats::robobook(toc_depth = 3, ...) })
+editor_options: 
+  chunk_output_type: console
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "docs") })  
+---
+
+This is a quick exploration of institutions associated with ABNJ data in OBIS.
+
+## Record level institution codes
+
+Often Darwin Core records will include an `institutionCode`, which is defined as _"The name (or acronym) in use by the institution having custody of the object(s) or information referred to in the record"_. In some cases all records in a dataset share the same `institutionCode`, in other cases there will by many. This is the case for example when a dataset consists of occurrences extracted from a variety of publications, or when a dataset results from a cruise which involved researchers from different institutions.
+
+Let's start by downloading all OBIS occurrences in ABNJ. Results are cached in `occurrence.Rdata`.
+
+```{r message=FALSE, warning=FALSE}
+library(robis)
+
+if (file.exists("occurrence.Rdata")) {
+  df <- readRDS("occurrence.Rdata")  
+} else {
+  df <- occurrence(areaid = 1, fields = c("institutionCode", "collectionCode", "decimalLongitude", "decimalLatitude", "eventDate", "scientificName", "dataset_id"))
+  saveRDS(df, file = "occurrence.Rdata")
+}
+```
+
+Based on the occurrence data we can list the most common `institutionCode` in terms of number of records and datasets:
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+library(knitr)
+
+institution_codes <- df %>%
+  filter(!is.na(institutionCode)) %>%
+  group_by(institutionCode) %>%
+  summarize(records = n()) %>% # , datasets = length(unique(dataset_id))
+  arrange(desc(records))
+
+institution_codes %>%
+  head(30) %>%
+  kable()
+```
+
+The completed list contains **`r nrow(institution_codes)`** institution codes, and is written to a CSV file for further analysis:
+
+```{r message=FALSE, warning=FALSE}
+write.csv(institution_codes, file = "institution_codes.csv", row.names = FALSE, na = "")
+```
+
+## Dataset level institutions (OceanExpert)
+
+In addition to record level institution codes, datasets have institutions linked in their EML metadata records. There is currently no institute function in the robis package, but we can get institutes straight from the API. It's important to note that this endpoint only returns institutions that have been matched with OceanExpert. In the next section I will show how to get all institutions including the ones that have not been matched.
+
+```{r message=FALSE, warning=FALSE}
+library(jsonlite)
+
+inst <- fromJSON("https://api.obis.org/institute?areaid=1")$results %>%
+  as_tibble()
+inst
+```
+
+This gives us a list of **`r nrow(inst)`** institutions. Again we can rank these institutions by number of records. The `id` in this table is the institution's OceanExpert ID.
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+library(knitr)
+
+institutions <- inst %>%
+  select(id, name, country, records) %>%
+  arrange(desc(records))
+
+institutions %>%
+  head(30) %>%
+  kable()
+```
+
+And write to csv:
+
+```{r message=FALSE, warning=FALSE}
+write.csv(institutions, file = "institutions_oceanexpert.csv", row.names = FALSE, na = "")
+```
+
+## Dataset level institutions (all)
+
+To get all institutions linked to ABNJ datasets, we can use the datasets contacts returned by the `/dataset` API endpoint. There's a `dataset()` function in robis but it does not include the contacts
+
+```{r message=FALSE, warning=FALSE}
+library(tidyr)
+
+datasets <- fromJSON("https://api.obis.org/dataset?areaid=1")$results %>%
+  as_tibble()
+datasets
+
+institutions_all <- datasets %>%
+  select(id, records, contacts) %>%
+  unnest(cols = c(contacts)) %>%
+  filter(!is.na(organization)) %>%
+  distinct(id, records, organization) %>%
+  group_by(organization) %>%
+  summarize(records = sum(records), datasets = n()) %>%
+  arrange(desc(records))
+
+institutions_all %>%
+  head(30) %>%
+  kable()
+```
+
+This list contains **`r nrow(institutions_all)`** institutions. Let's export it as CSV:
+
+```{r message=FALSE, warning=FALSE}
+write.csv(institutions_all, file = "institutions_all.csv", row.names = FALSE, na = "")
+```
